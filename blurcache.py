@@ -3,6 +3,18 @@ import json
 import PyRSS2Gen
 import datetime
 
+def today():
+    dayoftheweek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    return dayoftheweek[datetime.date.weekday(datetime.date.today())]
+
+def this_year():
+    return str(datetime.date.today().year)
+
+def to_datetime(long_parsed_date):
+    date = long_parsed_date.replace('Today', today()).replace('th ', "th, {0} ".format(this_year()))
+    date2 = date.replace('th', '')
+    return datetime.datetime.strptime(date2, "%A, %B %d, %Y %I:%M%p")
+
 # login to Newsblur
 b = NewsBlur("user", "pa$$word")
 b.login()
@@ -22,8 +34,7 @@ if starred['authenticated'] == True and starred['result'] == 'ok':
             link = story['story_permalink'],
             description = story['story_content'],
             guid = PyRSS2Gen.Guid(story['story_permalink']),
-            #pubDate = story['shot_parsed_date'] #need to convert to datetime
-            pubDate = datetime.datetime.utcnow()
+            pubDate = to_datetime(story['long_parsed_date'])
         )
         feed_items.append(item)
     # then make the feed
