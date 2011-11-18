@@ -38,6 +38,3 @@ class NewsBlur:
     def starred(self):
         """handy get starred items shortcut"""
         return self.get_api("reader/starred_stories")
-
-    def write_rss():
-        pass
