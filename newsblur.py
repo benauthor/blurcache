@@ -18,10 +18,7 @@ class NewsBlur:
         request = urllib2.Request(url, data)
         response = urllib2.urlopen(request)
         self.cj.extract_cookies(response, request)
-        print "Response:"
-        print response.read()
-        print "\nCookies:"
-        print self.cj
+        return response.read()
 
     def get_api(self, api_method):
         """generic get request"""
