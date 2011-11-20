@@ -7,11 +7,15 @@ def today():
     dayoftheweek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     return dayoftheweek[datetime.date.weekday(datetime.date.today())]
 
+def yesterday():
+    dayoftheweek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    return dayoftheweek[datetime.date.weekday(datetime.date.today())]
+
 def this_year():
     return str(datetime.date.today().year)
 
 def to_datetime(long_parsed_date):
-    date = long_parsed_date.replace('Today', today()).replace('th ', "th, {0} ".format(this_year()))
+    date = long_parsed_date.replace('Today', today()).replace('Yesterday', yesterday()).replace('th ', "th, {0} ".format(this_year()))
     date2 = date.replace('th', '')
     return datetime.datetime.strptime(date2, "%A, %B %d, %Y %I:%M%p")
 
