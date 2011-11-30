@@ -4,13 +4,12 @@ import PyRSS2Gen
 import datetime
 import dateutil.parser
 
-def this_year():
-    return str(datetime.date.today().year)
-
 def to_datetime(date):
     """ Regularize long_parsed_date and return it as datetime.
 
     >>> to_datetime('Today, August 12th 9:55pm')
+    datetime.datetime(2011, 8, 12, 21, 55)
+    >>> to_datetime('Yesterday, August 12th 9:55pm')
     datetime.datetime(2011, 8, 12, 21, 55)
     >>> to_datetime(', December, 2nd 2010 12:01AM')
     datetime.datetime(2010, 12, 2, 0, 1)
