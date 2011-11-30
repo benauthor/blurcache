@@ -2,23 +2,25 @@ from newsblur import NewsBlur
 import json
 import PyRSS2Gen
 import datetime
+import dateutil.parser
 
 def this_year():
     return str(datetime.date.today().year)
 
-def to_datetime(long_parsed_date):
-    # add year if missing
-    date = long_parsed_date.replace('th ', "th, {0} ".format(this_year()))
-    # remove day
-    days = ["Today", "Yesterday", "Sunday", "Monday", "Tuesday", "Wednesday",
-            "Thursday", "Friday", "Saturday"]
-    for day in days:
-        date = date.replace("{0}, ".format(day), '')
-    # remove ordinal suffixes
-    suffixes = ["st", "nd", "rd", "th"]
-    for suffix in suffixes:
-        date = date.replace(suffix, '')
-    return datetime.datetime.strptime(date, "%B %d, %Y %I:%M%p")
+def to_datetime(date):
+    """ Regularize long_parsed_date and return it as datetime.
+
+    >>> to_datetime('Today, August 12th 9:55pm')
+    datetime.datetime(2011, 8, 12, 21, 55)
+    >>> to_datetime(', December, 2nd 2010 12:01AM')
+    datetime.datetime(2010, 12, 2, 0, 1)
+    >>> to_datetime('Tuesday, November, 29, 2011 3:00AM')
+    datetime.datetime(2011, 11, 29, 3, 0)
+    """
+    # remove problematic junk
+    for day in ["Today", "Yesterday"]:
+        date = date.replace(day, '')
+    return dateutil.parser.parse(date)
 
 # login to Newsblur
 b = NewsBlur("user", "pa$$word")
