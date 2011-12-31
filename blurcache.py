@@ -1,8 +1,8 @@
-from newsblur import NewsBlur
 import json
-import PyRSS2Gen
 import datetime
+import PyRSS2Gen
 import dateutil.parser
+import requests
 
 def to_datetime(date):
     """ Regularize long_parsed_date and return it as datetime.
@@ -21,13 +21,16 @@ def to_datetime(date):
         date = date.replace(day, '')
     return dateutil.parser.parse(date)
 
-# login to Newsblur
-b = NewsBlur("user", "pa$$word")
-b.login()
 
+base_url = "http://www.newsblur.com/"
+auth_data = { "username": "johnnyuser", "password": "verynicePW123" }
+
+s = requests.session()
+# login to Newsblur
+s.post(base_url + "api/login", data=auth_data)
 # get starred items
-response = b.starred()
-starred = json.loads(response)
+b = s.get( base_url + "reader/starred_stories")
+starred = json.loads(b.content)
 
 # write rss
 feed_items = []
@@ -45,9 +48,9 @@ if starred['authenticated'] == True and starred['result'] == 'ok':
         feed_items.append(item)
     # then make the feed
     rss = PyRSS2Gen.RSS2(
-        title = "Evan's Shared Reader Items",
+        title = "My Great Shared Reader Items",
         link = "http://www.newsblur.com",
-        description = "Evan's Starred Items from NewsBlur",
+        description = "My Starred Items from NewsBlur",
         lastBuildDate = datetime.datetime.utcnow(),
         items = feed_items
         )
@@ -58,4 +61,4 @@ else:
     print starred['authenticated']
     print starred['result']
 
-b.logout()
+s.post(base_url + "api/logout")
